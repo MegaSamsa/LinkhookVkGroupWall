@@ -11,7 +11,7 @@
     check_interval  | int   |   время таймера
 
 Структура проекта:
-helios_webhook      | Корневая папка проекта
+LinkhookVkGroupWall | Корневая папка проекта
     __pychache__    | Программная папка для оптимизации кода
     .gitignore      | Игнорирование публикации config.json и links.xlsx в репозитории
     config.json     | Файл конфигурации
