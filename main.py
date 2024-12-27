@@ -1,13 +1,25 @@
 import init
 
-with open('config.json', 'r', encoding='utf-8') as json_file:
-    config = init.json.load(json_file)
+def app_close(text):
+    print(f"Программа завершила работу с ошибкой{text}")
+    input("Нажмите Enter, чтобы выйти...")
+    init.sys.exit()
+
+try:
+    with open('config.json', 'r', encoding='utf-8') as json_file:
+        config = init.json.load(json_file)
+except Exception as e:
+    app_close(text=f": {e}")
 
 GROUP_ID = config['group_id']
 ACCESS_TOKEN = config['access_token']
 VERSION = config['version']
 CHECK_INTERVAL = config['check_interval']
 table_file: str = 'links.xlsx'
+
+def config_info():
+    separator = "#" * 32
+    print(f"{separator}\nТекущая конфигурация:\nID отслеживаемой группы: {GROUP_ID}\nИнтервал проверок: {CHECK_INTERVAL} сек.\n{separator}\n")
 
 def get_last_post_id():
     url = 'https://api.vk.com/method/wall.get'
@@ -20,7 +32,7 @@ def get_last_post_id():
     
     response = init.requests.get(url, params=params)
     data = response.json()
-    # print(data)
+
     if not 'error' in data:
         if 'response' in data and 'items' in data['response'] and len(data['response']['items']) > 0:
             try:
@@ -33,9 +45,7 @@ def get_last_post_id():
         else:
             raise Exception("Не удалось получить посты")
     else:
-        print(f"Программа завершила работу с ошибкой {data['error']['error_code']}: {data['error']['error_msg']}\n")
-        input("Нажмите Enter, чтобы выйти...")
-        init.sys.exit()
+        app_close(text=f" {data['error']['error_code']}: {data['error']['error_msg']}\n")
     
 def last_post_hook():
     last_post_id = get_last_post_id()
@@ -77,7 +87,8 @@ def add_link_to_excel(post_link):
     print(f"Ссылка успешно внесена в {table_file}")
 
 def main():
-    print("Скрипт запущен..")
+    config_info()
+    print("LinkhookVk запущен...")
     if not init.os.path.exists(table_file):
         create_table()
     last_post_hook()
