@@ -7,22 +7,26 @@ GROUP_ID = config['group_id']
 ACCESS_TOKEN = config['access_token']
 VERSION = config['version']
 CHECK_INTERVAL = config['check_interval']
-table_file: str = "links.xlsx"
+table_file: str = 'links.xlsx'
 
 def get_last_post_id():
     url = 'https://api.vk.com/method/wall.get'
     params = {
         'owner_id': -int(GROUP_ID),
-        'count': 1,
+        'count': 2,
         'access_token': ACCESS_TOKEN,
         'v': VERSION
     }
     
     response = init.requests.get(url, params=params)
     data = response.json()
+    # print(data)
     
     if 'response' in data and 'items' in data['response'] and len(data['response']['items']) > 0:
-        return data['response']['items'][0]['id']
+        if data['response']['items'][0]['is_pinned'] == 0:
+            return data['response']['items'][0]['id']
+        else:
+            return data['response']['items'][1]['id']
     else:
         raise Exception("Не удалось получить посты")
 
@@ -56,7 +60,7 @@ def create_empty_excel(columns: list, filename: str, sheet_name: str = 'Лист
 
 def create_table():
     filepath = create_empty_excel(columns=['Ссылка'], filename=table_file)
-    print(f"Файл {table_file} успешно создан.")
+    print(f"Файл {table_file} успешно создан")
 
 def add_link_to_excel(post_link):
     new_row = init.pd.DataFrame({'Ссылка': [post_link]})
@@ -66,6 +70,7 @@ def add_link_to_excel(post_link):
     print(f"Ссылка успешно внесена в {table_file}")
 
 def main():
+    print("Скрипт запущен..")
     if not init.os.path.exists(table_file):
         create_table()
     last_post_hook()
