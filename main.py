@@ -20,18 +20,23 @@ def get_last_post_id():
     
     response = init.requests.get(url, params=params)
     data = response.json()
-    
-    if 'response' in data and 'items' in data['response'] and len(data['response']['items']) > 0:
-        try:
-            if data['response']['items'][0]['is_pinned'] == 0:
+    # print(data)
+    if not 'error' in data:
+        if 'response' in data and 'items' in data['response'] and len(data['response']['items']) > 0:
+            try:
+                if data['response']['items'][0]['is_pinned'] == 0:
+                    return data['response']['items'][0]['id']
+                else:
+                    return data['response']['items'][1]['id']
+            except:
                 return data['response']['items'][0]['id']
-            else:
-                return data['response']['items'][1]['id']
-        except:
-            return data['response']['items'][0]['id']
+        else:
+            raise Exception("Не удалось получить посты")
     else:
-        raise Exception("Не удалось получить посты")
-
+        print(f"Программа завершила работу с ошибкой {data['error']['error_code']}: {data['error']['error_msg']}\n")
+        input("Нажмите Enter, чтобы выйти...")
+        init.sys.exit()
+    
 def last_post_hook():
     last_post_id = get_last_post_id()
     print(f"Изначально последний пост ID: {last_post_id}")
