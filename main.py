@@ -20,13 +20,15 @@ def get_last_post_id():
     
     response = init.requests.get(url, params=params)
     data = response.json()
-    # print(data)
     
     if 'response' in data and 'items' in data['response'] and len(data['response']['items']) > 0:
-        if data['response']['items'][0]['is_pinned'] == 0:
+        try:
+            if data['response']['items'][0]['is_pinned'] == 0:
+                return data['response']['items'][0]['id']
+            else:
+                return data['response']['items'][1]['id']
+        except:
             return data['response']['items'][0]['id']
-        else:
-            return data['response']['items'][1]['id']
     else:
         raise Exception("Не удалось получить посты")
 
