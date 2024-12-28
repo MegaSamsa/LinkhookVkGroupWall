@@ -18,7 +18,7 @@ CHECK_INTERVAL = config['check_interval']
 table_file: str = 'links.xlsx'
 
 def config_info():
-    separator = "#" * 32
+    separator = "-" * 56
     print(f"{separator}\nТекущая конфигурация:\nID отслеживаемой группы: {GROUP_ID}\nИнтервал проверок: {CHECK_INTERVAL} сек.\n{separator}\n")
 
 def get_last_post_id():
