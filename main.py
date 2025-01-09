@@ -15,7 +15,9 @@ GROUP_ID = config['group_id']
 ACCESS_TOKEN = config['access_token']
 VERSION = config['version']
 CHECK_INTERVAL = config['check_interval']
-table_file: str = 'links.xlsx'
+FILE_PATH = config['file_path']
+table_file: str = 'Ссылки.xlsx'
+full_path = f"{FILE_PATH}{table_file}"
 
 def config_info():
     separator = "-" * 56
@@ -68,7 +70,7 @@ def last_post_hook():
 def create_empty_excel(columns: list, filename: str, sheet_name: str = 'Лист 1'):
     df = init.pd.DataFrame(columns=columns)
 
-    filepath = init.os.path.join('', filename)
+    filepath = init.os.path.join(full_path)
     excel_writer = init.pd.ExcelWriter(filepath, engine='xlsxwriter')
     df.to_excel(excel_writer, index=False, sheet_name=sheet_name, freeze_panes=(1, 0))
     excel_writer._save()
@@ -81,15 +83,15 @@ def create_table():
 
 def add_link_to_excel(post_link):
     new_row = init.pd.DataFrame({'Ссылка': [post_link]})
-    df = init.pd.read_excel(table_file)
+    df = init.pd.read_excel(full_path)
     df = init.pd.concat([df, new_row], ignore_index=True)
-    df.to_excel(table_file, index=False)
+    df.to_excel(full_path, index=False)
     print(f"Ссылка успешно внесена в {table_file}")
 
 def main():
     config_info()
     print("LinkhookVk запущен...")
-    if not init.os.path.exists(table_file):
+    if not init.os.path.exists(full_path):
         create_table()
     last_post_hook()
 
