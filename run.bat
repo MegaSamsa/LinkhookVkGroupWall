@@ -5,7 +5,7 @@
 ::: / /__| | | | |   <| | | | (_) | (_) |   <  \ V /|   < 
 ::: \____/_|_| |_|_|\_\_| |_|\___/ \___/|_|\_\  \_/ |_|\_\
 for /f "delims=: tokens=*" %%A in ('findstr /b ::: "%~f0"') do @echo(%%A
-echo  LinkhookVk [Version 1.1]
+echo  LinkhookVk [Version 1.2]
 echo.
 cd /D "%~dp0"
 python main.py
